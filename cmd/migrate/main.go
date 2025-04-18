@@ -8,6 +8,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -18,8 +19,15 @@ func main() {
 
 	direction := os.Args[1]
 
-	// 🔁 Update with your actual Postgres credentials
-	connStr := "postgresql://ticket_owner:npg_k52oIrYlRgwz@ep-cold-art-a4q6c276-pooler.us-east-1.aws.neon.tech/ticket?sslmode=require"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Failed to load .env file")
+	}
+
+	connStr := os.Getenv("DATABASE_URL")
+	if connStr == "" {
+		log.Fatal("Databse .env is missing")
+	}
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
